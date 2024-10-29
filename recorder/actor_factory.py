@@ -12,7 +12,7 @@ from utils.geometry_types import *
 from utils.transform import transform_to_carla_transform
 
 from recorder.actor import Actor, PseudoActor
-from recorder.camera import RgbCamera, DepthCamera, SemanticSegmentationCamera
+from recorder.camera import RgbCamera, DepthCamera, SemanticSegmentationCamera, FisheyeDepthCamera
 from recorder.lidar import Lidar, SemanticLidar
 from recorder.radar import Radar
 from recorder.vehicle import Vehicle, OtherVehicle
@@ -259,6 +259,19 @@ class ActorFactory(object):
                                      parent=parent_actor)
         elif sensor_type == 'sensor.camera.depth':
             sensor_actor = DepthCamera(uid=self.generate_uid(),
+                                       name=sensor_name,
+                                       base_save_dir=parent_actor.get_save_dir(),
+                                       carla_actor=carla_actor,
+                                       parent=parent_actor)
+        elif sensor_type == 'sensor.camera.huawei_fisheye':
+            if sensor_info.get('enableDepth') is True:
+                sensor_actor = FisheyeDepthCamera(uid=self.generate_uid(),
+                                        name=sensor_name,
+                                        base_save_dir=parent_actor.get_save_dir(),
+                                        carla_actor=carla_actor,
+                                        parent=parent_actor)
+            else:
+                sensor_actor = DepthCamera(uid=self.generate_uid(),
                                        name=sensor_name,
                                        base_save_dir=parent_actor.get_save_dir(),
                                        carla_actor=carla_actor,

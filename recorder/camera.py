@@ -26,16 +26,28 @@ class CameraBase(Sensor):
         # Convert to target color template
         if self.color_converter is not None:
             sensor_data.convert(self.color_converter)
-
+        print("Color converter type:", self.color_converter)
+        if self.color_converter == carla.ColorConverter.Depth:
+            array = np.frombuffer(sensor_data.raw_data, dtype=np.dtype("uint8"))
+            array = np.reshape(array, (sensor_data.height, sensor_data.width, 4))
+            depth_array = array[:, :, :3]
+            R = depth_array[:, :, 0]
+            G = depth_array[:, :, 1]
+            B = depth_array[:, :, 2]
+            normalized = (R + G * 256 + B * 256 * 256) / (256 * 256 * 256 - 1)
+            depth_in_meters = 1000 * normalized
+            gray_image = cv.normalize(depth_in_meters, None, 0, 255, cv.NORM_MINMAX)
+            success = cv.imwrite("{}/{:0>10d}.png".format(save_dir, sensor_data.frame), gray_image.astype(np.uint8))
+        else:
         # Convert raw data to numpy array, image type is 'bgra8'
-        carla_image_data_array = np.ndarray(shape=(sensor_data.height,
+            carla_image_data_array = np.ndarray(shape=(sensor_data.height,
                                                    sensor_data.width,
                                                    4),
                                             dtype=np.uint8,
                                             buffer=sensor_data.raw_data)
 
-        # Save image to [RAW_DATA_PATH]/.../[ID]_[SENSOR_TYPE]/[FRAME_ID].png
-        success = cv.imwrite("{}/{:0>10d}.png".format(save_dir,
+            # Save image to [RAW_DATA_PATH]/.../[ID]_[SENSOR_TYPE]/[FRAME_ID].png
+            success = cv.imwrite("{}/{:0>10d}.png".format(save_dir,
                                                       sensor_data.frame),
                              carla_image_data_array)
 
@@ -98,6 +110,11 @@ class SemanticSegmentationCamera(CameraBase):
         color_converter = carla.ColorConverter.CityScapesPalette
         super().__init__(uid, name, base_save_dir, parent, carla_actor, color_converter)
 
+class FisheyeDepthCamera(CameraBase):
+    def __init__(self, uid, name: str, base_save_dir: str, parent, carla_actor: carla.Sensor,
+                 color_converter: carla.ColorConverter = None):
+        color_converter = carla.ColorConverter.LogarithmicDepth
+        super().__init__(uid, name, base_save_dir, parent, carla_actor, color_converter)
 
 class DepthCamera(CameraBase):
     def __init__(self, uid, name: str, base_save_dir: str, parent, carla_actor: carla.Sensor,

@@ -1,15 +1,15 @@
 {
     "frame_total": 12000,
     "frame_step": 3,
-    "map": "Town02",
-    "spectator_pose": {"x": 100, "y": -150.0, "z": 150, "roll": 0, "pitch": 60.0, "yaw": -90.0},
+    "map": "SUSTC_ParkingLot",
+    "spectator_pose": {"x": -15.5, "y": 27.9, "z": -2.0, "roll": 0, "pitch": 0.0, "yaw": 0.0},
     "world_settings":
     {
         "fixed_delta_seconds": 0.1,
         "max_substep_delta_time": 0.01,
         "max_substeps": 16
     },
-    "actor_settings": "actor_settings_template.json",
+    "actor_settings": "actor_fisheye.json",
     "traffic_light_setting":
     {
         "red_time": 2.0,

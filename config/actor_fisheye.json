@@ -1,0 +1,16 @@
+{
+    "actors":
+    [
+        {
+            "type": "vehicle.tesla.model3",
+            "name": "vehicle.tesla.model3.master",
+            "sensors_setting": "sensor_fisheye.json",
+            "spawn_point": 0
+        }
+    ],
+    "other_vehicles":
+    {
+        "vehicle_num": 0,
+        "spawn_points": []
+    }
+}
